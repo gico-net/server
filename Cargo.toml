@@ -1,0 +1,11 @@
+[package]
+name = "gico"
+version = "0.1.0"
+authors = ["Santo Cariotti <santo@dcariotti.me>"]
+edition = "2018"
+
+[dependencies]
+actix-rt = "1.0.0"
+actix-web = "2.0.0"
+actix-http = "1.0.1"
+actix-service = "1.0.5"
