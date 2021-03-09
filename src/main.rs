@@ -19,7 +19,7 @@ async fn main() -> std::io::Result<()> {
                 .to(|| HttpResponse::Ok().body("Hello from Rust!")),
         )
     })
-    .bind("127.0.0.1:8080")?
+    .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
     .await
 }
