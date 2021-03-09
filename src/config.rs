@@ -2,7 +2,14 @@ pub use config::ConfigError;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+pub struct ServerConfig {
+    pub host: String,
+    pub port: u16,
+}
+
+#[derive(Deserialize)]
 pub struct Config {
+    pub server: ServerConfig,
     pub pg: deadpool_postgres::Config,
 }
 

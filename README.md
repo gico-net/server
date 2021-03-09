@@ -3,6 +3,8 @@
 <key>.env</key>
 
 ```
+SERVER.HOST=<host>
+SERVER.PORT=<port>
 PG.USER=<user>
 PG.PASSWORD=<psw>
 PG.HOST=<host>
