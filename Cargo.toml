@@ -9,6 +9,11 @@ actix-rt = "1.0.0"
 actix-web = "2.0.0"
 actix-http = "1.0.1"
 actix-service = "1.0.5"
+
+slog = "2.4.1"
+slog-term = "2.5.0"
+slog-async = "2.4.0"
+
 dotenv = "0.15.0"
 config = "0.10.1"
 serde = { version = "1.0.104", features = ["derive"] }
