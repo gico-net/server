@@ -1,17 +1,15 @@
 mod config;
+mod db;
+mod errors;
 
-use actix_web::{middleware, web, App, HttpServer};
+mod repository;
+
+use actix_web::{middleware, App, HttpServer};
 use dotenv::dotenv;
 use slog::info;
 use tokio_postgres::NoTls;
 
-use crate::config::{Config, AppState};
-
-async fn index(state: web::Data<AppState>) -> &'static str {
-    info!(state.log, "GET `/` page");
-
-    "Hello from Rust!"
-}
+use crate::config::{AppState, Config};
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -35,7 +33,7 @@ async fn main() -> std::io::Result<()> {
                 log: log.clone(),
             })
             .wrap(middleware::Logger::default())
-            .route("/", web::get().to(index))
+            .configure(repository::routes::config)
     })
     .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
