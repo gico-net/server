@@ -1,5 +1,5 @@
 use crate::db::get_client;
-use crate::errors::AppError;
+use crate::errors::{AppError, AppErrorType};
 use chrono::NaiveDateTime;
 use deadpool_postgres::Pool;
 use serde::{Deserialize, Serialize};
@@ -32,5 +32,26 @@ impl Repository {
             .collect::<Vec<Repository>>();
 
         Ok(repos)
+    }
+
+    pub async fn find(pool: Pool, id: &Uuid) -> Result<Repository, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+        let statement = client
+            .prepare("SELECT * FROM repository WHERE id = $1")
+            .await?;
+
+        let repo = client
+            .query_opt(&statement, &[&id])
+            .await?
+            .map(|row| Repository::from_row_ref(&row).unwrap());
+
+        match repo {
+            Some(repo) => Ok(repo),
+            None => Err(AppError {
+                error_type: AppErrorType::NotFoundError,
+                cause: None,
+                message: Some("Repository not found".to_string()),
+            }),
+        }
     }
 }
