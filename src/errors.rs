@@ -62,7 +62,7 @@ impl fmt::Display for AppError {
 
 #[derive(Serialize)]
 pub struct AppErrorResponse {
-    pub error: String,
+    pub detail: String,
 }
 
 impl ResponseError for AppError {
@@ -74,7 +74,7 @@ impl ResponseError for AppError {
     }
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code()).json(AppErrorResponse {
-            error: self.message(),
+            detail: self.message(),
         })
     }
 }
