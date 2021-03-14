@@ -1,0 +1,119 @@
+_type: export
+__export_format: 4
+__export_date: 2021-03-14T21:23:45.742Z
+__export_source: insomnia.desktop.app:v2020.4.2
+resources:
+  - _id: req_d42fbef765e149648399036fbb069ea3
+    parentId: fld_b5ba3b39b5394b64b0fea47812192c27
+    modified: 1615752358888
+    created: 1615752333861
+    url: "{{ API }}/repo/"
+    name: /repo/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615752333861
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_b5ba3b39b5394b64b0fea47812192c27
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1615752305144
+    created: 1615752305144
+    name: Repository
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1615752305144
+    _type: request_group
+  - _id: wrk_83d42d64ffc54233ba18b02611268a92
+    parentId: null
+    modified: 1615752298886
+    created: 1615752298886
+    name: Gico
+    description: ""
+    scope: null
+    _type: workspace
+  - _id: req_ad2a16371ab44200a3f580000ece7dec
+    parentId: fld_b5ba3b39b5394b64b0fea47812192c27
+    modified: 1615752395118
+    created: 1615752376746
+    url: "{{API}}/repo/eac980b2-b4dc-400d-9110-4ea6a45c730a/"
+    name: /repo/<uid>/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615752333811
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_0a203eacc036463a8e3c1a3a900b8109
+    parentId: fld_b5ba3b39b5394b64b0fea47812192c27
+    modified: 1615756966728
+    created: 1615752431937
+    url: "{{API}}/repo/dbc980b2-b4dc-400d-9110-4ea6a45c730a/"
+    name: /repo/<uid>/
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication:
+      type: bearer
+      token: this_is_THE_secret_key
+      prefix: ""
+      disabled: false
+    metaSortKey: -1615752333761
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_fae256ef6cd347e85cc3938afa45748d6a2ec5a2
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1615752324694
+    created: 1615752299371
+    name: Base Environment
+    data:
+      API: http://localhost:5000
+    dataPropertyOrder:
+      "&":
+        - API
+    color: null
+    isPrivate: false
+    metaSortKey: 1615752299371
+    _type: environment
+  - _id: jar_fae256ef6cd347e85cc3938afa45748d6a2ec5a2
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1615752299381
+    created: 1615752299381
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_b4597c0ad54448e7b3f35c845a6c0bd6
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1615752298897
+    created: 1615752298897
+    fileName: Gico
+    contents: ""
+    contentType: yaml
+    _type: api_spec
