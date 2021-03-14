@@ -24,9 +24,17 @@ async fn index(state: web::Data<AppState>) -> impl Responder {
 /// It is a String, casted in an Uuid format.
 async fn get_repo(
     state: web::Data<AppState>,
-    id: web::Path<(Uuid,)>,
+    id: web::Path<(String,)>,
 ) -> impl Responder {
-    let result = Repository::find(state.pool.clone(), &id.0).await;
+    // I have to match the &id.0 because if it's not a valid Uuid, the server
+    // must response "Repository not found".
+    // If I pass a not valid Uuid to Repository::find() it raises an error.
+    let uuid: Uuid = match Uuid::parse_str(&id.0) {
+        Ok(x) => x,
+        Err(_) => Uuid::parse_str("00000000000000000000000000000000").unwrap(),
+    };
+
+    let result = Repository::find(state.pool.clone(), &uuid).await;
     info!(state.log, "GET /repo/{}/", id.0);
 
     // `map_err` is also used when repo is not found
