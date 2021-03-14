@@ -1,9 +1,11 @@
 use crate::config::AppState;
-use crate::errors::AppErrorResponse;
+use crate::errors::{AppError, AppErrorResponse, AppErrorType};
 use crate::helpers::uuid_from_string;
 use crate::repository::models::Repository;
-use actix_web::{web, HttpResponse, Responder};
+use actix_web::http::header;
+use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use slog::info;
+use std::env;
 use uuid::Uuid;
 
 /// Endpoint used for retrieve all repositories
@@ -41,9 +43,52 @@ async fn get_repo(
         .map_err(|e| e)
 }
 
+/// Endpoint used for delete repository.
+/// It uses a SECRET_KEY used like an API key
+async fn delete_repo(
+    req: HttpRequest,
+    state: web::Data<AppState>,
+    id: web::Path<(String,)>,
+) -> impl Responder {
+    let uuid: Uuid = uuid_from_string(&id.0);
+    match req.headers().get(header::AUTHORIZATION) {
+        Some(x)
+            if x.to_str().unwrap()
+                != env::var("SECRET_KEY").unwrap_or("".to_string()) =>
+        {
+            info!(state.log, "DELETE /repo/{}/ 401", id.0);
+            return Err(AppError {
+                error_type: AppErrorType::AuthorizationError,
+                message: Some(
+                    "You must provide a valid Authorization".to_string(),
+                ),
+                cause: None,
+            });
+        }
+        Some(_) => {}
+        None => {
+            info!(state.log, "DELETE /repo/{}/ 400", id.0);
+            return Ok(HttpResponse::BadRequest().body(""));
+        }
+    };
+
+    let result = Repository::delete(state.pool.clone(), &uuid).await;
+    info!(state.log, "DELETE /repo/{}/", id.0);
+
+    result
+        .map(|_| HttpResponse::NoContent().body(""))
+        .map_err(|e| e)
+}
+
+/// Routes for repository. TODO: create endpoint for UPDATE method
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/repo{_:/?}").route(web::get().to(index)))
-        .service(
-            web::resource("/repo/{id}{_:/?}").route(web::get().to(get_repo)),
-        );
+    cfg.service(
+        web::scope("/repo")
+            .service(web::resource("{_:/?}").route(web::get().to(index)))
+            .service(
+                web::resource("/{id}{_:/?}")
+                    .route(web::get().to(get_repo))
+                    .route(web::delete().to(delete_repo)),
+            ),
+    );
 }

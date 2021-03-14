@@ -59,4 +59,36 @@ impl Repository {
             }),
         }
     }
+
+    /// Find a repository and delete it, but before check if "Authorization"
+    /// matches with SECRET_KEY
+    pub async fn delete(
+        pool: Pool,
+        id: &Uuid,
+    ) -> Result<Repository, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+        let statement = client
+            .prepare(
+                "
+                DELETE FROM repository
+                WHERE id=$1
+                RETURNING *
+                ",
+            )
+            .await?;
+
+        let repo = client
+            .query_opt(&statement, &[&id])
+            .await?
+            .map(|row| Repository::from_row_ref(&row).unwrap());
+
+        match repo {
+            Some(repo) => Ok(repo),
+            None => Err(AppError {
+                error_type: AppErrorType::NotFoundError,
+                cause: None,
+                message: Some("Repository not found".to_string()),
+            }),
+        }
+    }
 }
