@@ -8,6 +8,7 @@ use tokio_postgres::error::Error;
 pub enum AppErrorType {
     DbError,
     NotFoundError,
+    AuthorizationError,
 }
 
 #[derive(Debug)]
@@ -70,6 +71,7 @@ impl ResponseError for AppError {
         match self.error_type {
             AppErrorType::DbError => StatusCode::INTERNAL_SERVER_ERROR,
             AppErrorType::NotFoundError => StatusCode::NOT_FOUND,
+            AppErrorType::AuthorizationError => StatusCode::UNAUTHORIZED,
         }
     }
 
