@@ -1,6 +1,7 @@
 mod config;
 mod db;
 mod errors;
+mod helpers;
 
 mod repository;
 

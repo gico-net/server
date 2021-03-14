@@ -1,5 +1,6 @@
 use crate::config::AppState;
 use crate::errors::AppErrorResponse;
+use crate::helpers::uuid_from_string;
 use crate::repository::models::Repository;
 use actix_web::{web, HttpResponse, Responder};
 use slog::info;
@@ -29,10 +30,7 @@ async fn get_repo(
     // I have to match the &id.0 because if it's not a valid Uuid, the server
     // must response "Repository not found".
     // If I pass a not valid Uuid to Repository::find() it raises an error.
-    let uuid: Uuid = match Uuid::parse_str(&id.0) {
-        Ok(x) => x,
-        Err(_) => Uuid::parse_str("00000000000000000000000000000000").unwrap(),
-    };
+    let uuid: Uuid = uuid_from_string(&id.0);
 
     let result = Repository::find(state.pool.clone(), &uuid).await;
     info!(state.log, "GET /repo/{}/", id.0);
