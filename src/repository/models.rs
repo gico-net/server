@@ -9,6 +9,7 @@ use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, PostgresMapper)]
 #[pg_mapper(table = "repository")]
+/// Repository model
 pub struct Repository {
     pub id: Uuid,
     pub url: String,
@@ -18,6 +19,9 @@ pub struct Repository {
 }
 
 impl Repository {
+    /// Find all repositories inside the database.
+    /// Make a select query and order the repositories by descrescent updated
+    /// datetime
     pub async fn find_all(pool: Pool) -> Result<Vec<Repository>, AppError> {
         let client = get_client(pool.clone()).await.unwrap();
         let statement = client
@@ -34,6 +38,7 @@ impl Repository {
         Ok(repos)
     }
 
+    /// Find a repository with an `id` equals to an Uuid element
     pub async fn find(pool: Pool, id: &Uuid) -> Result<Repository, AppError> {
         let client = get_client(pool.clone()).await.unwrap();
         let statement = client

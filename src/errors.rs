@@ -72,6 +72,8 @@ impl ResponseError for AppError {
             AppErrorType::NotFoundError => StatusCode::NOT_FOUND,
         }
     }
+
+    /// Returns a JSON response with "detail" as key
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code()).json(AppErrorResponse {
             detail: self.message(),
