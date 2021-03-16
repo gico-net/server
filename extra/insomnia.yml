@@ -1,6 +1,6 @@
 _type: export
 __export_format: 4
-__export_date: 2021-03-14T21:23:45.742Z
+__export_date: 2021-03-16T13:18:44.060Z
 __export_source: insomnia.desktop.app:v2020.4.2
 resources:
   - _id: req_d42fbef765e149648399036fbb069ea3
@@ -42,6 +42,35 @@ resources:
     description: ""
     scope: null
     _type: workspace
+  - _id: req_4a674beeeee048f9a804d3b5f4ce5abf
+    parentId: fld_b5ba3b39b5394b64b0fea47812192c27
+    modified: 1615899152584
+    created: 1615883844898
+    url: "{{API}}/repo/"
+    name: /repo/
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"url": "https://github.com/gico-net/server.git"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_0c0c295ef0e741bb8f3a5b4b9b7924c9
+    authentication: {}
+    metaSortKey: -1615752333836
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
   - _id: req_ad2a16371ab44200a3f580000ece7dec
     parentId: fld_b5ba3b39b5394b64b0fea47812192c27
     modified: 1615752395118
@@ -65,7 +94,7 @@ resources:
     _type: request
   - _id: req_0a203eacc036463a8e3c1a3a900b8109
     parentId: fld_b5ba3b39b5394b64b0fea47812192c27
-    modified: 1615756966728
+    modified: 1615841682839
     created: 1615752431937
     url: "{{API}}/repo/dbc980b2-b4dc-400d-9110-4ea6a45c730a/"
     name: /repo/<uid>/
@@ -80,6 +109,87 @@ resources:
       prefix: ""
       disabled: false
     metaSortKey: -1615752333761
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_43bdccbddd5645ec84ae1458a171bdc1
+    parentId: fld_587740fc7d084792a897ae554ff46254
+    modified: 1615900193869
+    created: 1615896001344
+    url: "{{ API }}/email/"
+    name: /email/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615752333661
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_587740fc7d084792a897ae554ff46254
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1615899143962
+    created: 1615895986599
+    name: Email
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1615752305094
+    _type: request_group
+  - _id: req_10d1257a2fca47cfa04dc271450707b3
+    parentId: fld_587740fc7d084792a897ae554ff46254
+    modified: 1615900289005
+    created: 1615900198335
+    url: "{{ API }}/email/search/?q=santo@dcariotti.me"
+    name: /email/search/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615547149670.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_daa30eedb3fb48a0848c73fc555898df
+    parentId: fld_587740fc7d084792a897ae554ff46254
+    modified: 1615898990554
+    created: 1615897787425
+    url: "{{ API }}/email/"
+    name: /email/
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"email": "dcariotti24@gmail.com"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+        id: pair_d73066cd3e2245618aab96e8fe1e9327
+    authentication: {}
+    metaSortKey: -1615341965680
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true

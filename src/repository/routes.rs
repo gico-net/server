@@ -80,6 +80,7 @@ async fn delete_repo(
         .map_err(|e| e)
 }
 
+/// Endpoint used for create new repository
 async fn create_repo(
     req: HttpRequest,
     payload: web::Json<RepositoryData>,

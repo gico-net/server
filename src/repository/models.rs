@@ -180,12 +180,9 @@ impl Repository {
         };
 
         let repo = client
-            .query(&statement, &[&uuid, &repo_name, &user_ip])
+            .query_opt(&statement, &[&uuid, &repo_name, &user_ip])
             .await?
-            .iter()
-            .map(|row| Repository::from_row_ref(row).unwrap())
-            .collect::<Vec<Repository>>()
-            .pop();
+            .map(|row| Repository::from_row_ref(&row).unwrap());
 
         match repo {
             Some(repo) => Ok(repo),

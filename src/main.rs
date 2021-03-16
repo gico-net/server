@@ -3,6 +3,7 @@ mod db;
 mod errors;
 mod helpers;
 
+mod email;
 mod repository;
 
 use actix_web::{middleware, App, HttpServer};
@@ -35,6 +36,7 @@ async fn main() -> std::io::Result<()> {
             })
             .wrap(middleware::Logger::default())
             .configure(repository::routes::config)
+            .configure(email::routes::config)
     })
     .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
