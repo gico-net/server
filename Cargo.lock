@@ -913,6 +913,7 @@ dependencies = [
  "config",
  "deadpool-postgres",
  "dotenv",
+ "regex",
  "serde 1.0.124",
  "slog",
  "slog-async",

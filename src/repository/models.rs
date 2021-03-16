@@ -1,5 +1,6 @@
 use crate::db::get_client;
 use crate::errors::{AppError, AppErrorType};
+use crate::helpers::name_of_git_repository;
 
 use chrono::NaiveDateTime;
 use deadpool_postgres::{Client, Pool};
@@ -133,9 +134,20 @@ impl Repository {
     ) -> Result<Repository, AppError> {
         let client = get_client(pool.clone()).await.unwrap();
 
+        let repo_name: String = match name_of_git_repository(&data.url) {
+            Some(path) => path,
+            None => {
+                return Err(AppError {
+                    message: Some("Repository not found".to_string()),
+                    cause: Some("".to_string()),
+                    error_type: AppErrorType::NotFoundError,
+                });
+            }
+        };
+
         // Search a repository that matches with that url, because if it's
         // exists, the server do not create a clone
-        let repo_search = Repository::search(&client, data.url.clone()).await;
+        let repo_search = Repository::search(&client, repo_name.clone()).await;
         match repo_search {
             Ok(_) => {
                 return Err(AppError {
@@ -168,7 +180,7 @@ impl Repository {
         };
 
         let repo = client
-            .query(&statement, &[&uuid, &data.url, &user_ip])
+            .query(&statement, &[&uuid, &repo_name, &user_ip])
             .await?
             .iter()
             .map(|row| Repository::from_row_ref(row).unwrap())
