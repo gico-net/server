@@ -1,7 +1,7 @@
 use crate::config::AppState;
 use crate::errors::{AppError, AppErrorResponse, AppErrorType};
 use crate::helpers::uuid_from_string;
-use crate::repository::models::Repository;
+use crate::repository::models::{Repository, RepositoryData};
 use actix_web::http::header;
 use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use slog::info;
@@ -80,11 +80,31 @@ async fn delete_repo(
         .map_err(|e| e)
 }
 
+async fn create_repo(
+    req: HttpRequest,
+    payload: web::Json<RepositoryData>,
+    state: web::Data<AppState>,
+) -> impl Responder {
+    info!(state.log, "POST /repo/");
+    let request_from_ip = HttpRequest::peer_addr(&req);
+    let result =
+        Repository::create(state.pool.clone(), &payload, request_from_ip)
+            .await;
+
+    result
+        .map(|repo| HttpResponse::Ok().json(repo))
+        .map_err(|e| e)
+}
+
 /// Routes for repository. TODO: create endpoint for UPDATE method
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/repo")
-            .service(web::resource("{_:/?}").route(web::get().to(index)))
+            .service(
+                web::resource("{_:/?}")
+                    .route(web::get().to(index))
+                    .route(web::post().to(create_repo)),
+            )
             .service(
                 web::resource("/{id}{_:/?}")
                     .route(web::get().to(get_repo))

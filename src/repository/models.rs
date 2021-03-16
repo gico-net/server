@@ -1,11 +1,14 @@
 use crate::db::get_client;
 use crate::errors::{AppError, AppErrorType};
+
 use chrono::NaiveDateTime;
 use deadpool_postgres::{Client, Pool};
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
 use uuid::Uuid;
+
+use std::net::SocketAddr;
 
 #[derive(Serialize, Deserialize, PostgresMapper)]
 #[pg_mapper(table = "repository")]
@@ -16,6 +19,12 @@ pub struct Repository {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub uploader_ip: String,
+}
+
+/// Struct used to create a new repository
+#[derive(Serialize, Deserialize)]
+pub struct RepositoryData {
+    pub url: String,
 }
 
 impl Repository {
@@ -116,4 +125,63 @@ impl Repository {
         }
     }
 
+    /// Create a new repository. It uses RepositoryData as support struct
+    pub async fn create(
+        pool: Pool,
+        data: &RepositoryData,
+        uploader_ip: Option<SocketAddr>,
+    ) -> Result<Repository, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+
+        // Search a repository that matches with that url, because if it's
+        // exists, the server do not create a clone
+        let repo_search = Repository::search(&client, data.url.clone()).await;
+        match repo_search {
+            Ok(_) => {
+                return Err(AppError {
+                    message: Some("Repository already exists".to_string()),
+                    cause: Some("".to_string()),
+                    error_type: AppErrorType::AuthorizationError,
+                });
+            }
+            Err(_) => {}
+        };
+
+        let statement = client
+            .prepare("
+                INSERT INTO repository(id, url, uploader_ip) VALUES($1, $2, $3) RETURNING *
+            ").await?;
+
+        // Create a new UUID v4
+        let uuid = Uuid::new_v4();
+
+        // Match the uploader ip
+        let user_ip = match uploader_ip {
+            Some(ip) => ip.to_string(),
+            None => {
+                return Err(AppError {
+                    message: Some("Failed to fetch uploader ip".to_string()),
+                    cause: Some("".to_string()),
+                    error_type: AppErrorType::AuthorizationError,
+                })
+            }
+        };
+
+        let repo = client
+            .query(&statement, &[&uuid, &data.url, &user_ip])
+            .await?
+            .iter()
+            .map(|row| Repository::from_row_ref(row).unwrap())
+            .collect::<Vec<Repository>>()
+            .pop();
+
+        match repo {
+            Some(repo) => Ok(repo),
+            None => Err(AppError {
+                message: Some("Error creating a new repository".to_string()),
+                cause: Some("Unknown error".to_string()),
+                error_type: AppErrorType::DbError,
+            }),
+        }
+    }
 }
