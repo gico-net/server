@@ -1,7 +1,7 @@
 use crate::db::get_client;
 use crate::errors::{AppError, AppErrorType};
 use chrono::NaiveDateTime;
-use deadpool_postgres::Pool;
+use deadpool_postgres::{Client, Pool};
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
@@ -91,4 +91,29 @@ impl Repository {
             }),
         }
     }
+
+    /// Search a repository by its url
+    async fn search(
+        client: &Client,
+        url: String,
+    ) -> Result<Repository, AppError> {
+        let statement = client
+            .prepare("SELECT * FROM repository WHERE url=$1")
+            .await?;
+
+        let repo = client
+            .query_opt(&statement, &[&url])
+            .await?
+            .map(|row| Repository::from_row_ref(&row).unwrap());
+
+        match repo {
+            Some(repo) => Ok(repo),
+            None => Err(AppError {
+                error_type: AppErrorType::NotFoundError,
+                cause: None,
+                message: Some("Repository not found".to_string()),
+            }),
+        }
+    }
+
 }
