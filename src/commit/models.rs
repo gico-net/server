@@ -61,4 +61,36 @@ impl Commit {
             }),
         }
     }
+
+    /// Find a commit and delete it, but before check if "Authorization"
+    /// matches with SECRET_KEY
+    pub async fn delete(
+        pool: Pool,
+        hash: &String,
+    ) -> Result<Commit, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+        let statement = client
+            .prepare(
+                "
+                DELETE FROM commit
+                WHERE hash=$1
+                RETURNING *
+                ",
+            )
+            .await?;
+
+        let commit = client
+            .query_opt(&statement, &[&hash])
+            .await?
+            .map(|row| Commit::from_row_ref(&row).unwrap());
+
+        match commit {
+            Some(commit) => Ok(commit),
+            None => Err(AppError {
+                error_type: AppErrorType::NotFoundError,
+                cause: None,
+                message: Some("Commit not found".to_string()),
+            }),
+        }
+    }
 }
