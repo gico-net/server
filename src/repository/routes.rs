@@ -93,7 +93,7 @@ async fn create_repo(
             .await;
 
     result
-        .map(|repo| HttpResponse::Ok().json(repo))
+        .map(|repo| HttpResponse::Created().json(repo))
         .map_err(|e| e)
 }
 
