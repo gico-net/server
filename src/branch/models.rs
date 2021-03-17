@@ -17,6 +17,13 @@ pub struct Branch {
     pub head: String,
 }
 
+/// Struct used for forms
+pub struct BranchData {
+    pub name: String,
+    pub repository_id: Uuid,
+    pub head: String,
+}
+
 impl Branch {
     /// Find all branches
     pub async fn find_all(pool: Pool) -> Result<Vec<Branch>, AppError> {
@@ -99,6 +106,42 @@ impl Branch {
                 error_type: AppErrorType::NotFoundError,
                 cause: None,
                 message: Some("Branch not found".to_string()),
+            }),
+        }
+    }
+
+    /// Create a new branch
+    pub async fn create(
+        pool: Pool,
+        data: &BranchData,
+    ) -> Result<Branch, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+
+        let statement = client
+            .prepare(
+                "INSERT INTO repository(id, name, repository_id, head)
+                VALUES($1, $2, $3, $4)
+                RETURNING *",
+            )
+            .await?;
+
+        // Create a new UUID v4
+        let uuid = Uuid::new_v4();
+
+        let branch = client
+            .query_opt(
+                &statement,
+                &[&uuid, &data.name, &data.repository_id, &data.head],
+            )
+            .await?
+            .map(|row| Branch::from_row_ref(&row).unwrap());
+
+        match branch {
+            Some(branch) => Ok(branch),
+            None => Err(AppError {
+                message: Some("Error creating a new branch".to_string()),
+                cause: Some("Unknown error".to_string()),
+                error_type: AppErrorType::DbError,
             }),
         }
     }
