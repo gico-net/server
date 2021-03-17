@@ -1,8 +1,114 @@
 _type: export
 __export_format: 4
-__export_date: 2021-03-17T13:16:43.407Z
+__export_date: 2021-03-17T22:28:44.519Z
 __export_source: insomnia.desktop.app:v2020.4.2
 resources:
+  - _id: req_311381c6a05e4014a17bed92e76d7386
+    parentId: fld_74099d4813db4b0ebf18501913d8c49e
+    modified: 1616018902149
+    created: 1616016271976
+    url: "{{ API }}/branch/"
+    name: /branch/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615341965667.5
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_74099d4813db4b0ebf18501913d8c49e
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1616016258755
+    created: 1616016258755
+    name: Branch
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1616016258755
+    _type: request_group
+  - _id: wrk_83d42d64ffc54233ba18b02611268a92
+    parentId: null
+    modified: 1615752298886
+    created: 1615752298886
+    name: Gico
+    description: ""
+    scope: null
+    _type: workspace
+  - _id: req_873fc2a7c60f498882785a52f3274edd
+    parentId: fld_74099d4813db4b0ebf18501913d8c49e
+    modified: 1616018914550
+    created: 1616018892493
+    url: "{{ API }}/branch/repo/f4f6f98a-219d-4112-b136-1eb756a54935/"
+    name: /branch/repo/<uid>/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615341965661.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_66bfdc35fc8147c5ab01572ed9523ae9
+    parentId: fld_74099d4813db4b0ebf18501913d8c49e
+    modified: 1616019495529
+    created: 1616019442886
+    url: "{{ API }}/branch/bc889d69-e737-4071-a980-0d5e73af9724/"
+    name: /branch/<uid>/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615341965658.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_21f6012a44d94301b885db6f12ce8c77
+    parentId: fld_74099d4813db4b0ebf18501913d8c49e
+    modified: 1616019520939
+    created: 1616019469248
+    url: "{{API}}/branch/bc889d69-e737-4071-a980-0d5e73af9724/"
+    name: /branch/<uid>/
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication:
+      type: bearer
+      token: this_is_THE_secret_key
+      prefix: ""
+      disabled: false
+    metaSortKey: -1615341965608.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
   - _id: req_7b3981fcb2f04390af59d88e46e24f3c
     parentId: fld_a5143b0ad83e45488262d0ba2b32436d
     modified: 1615986338946
@@ -34,14 +140,6 @@ resources:
     environmentPropertyOrder: null
     metaSortKey: -1615986286319
     _type: request_group
-  - _id: wrk_83d42d64ffc54233ba18b02611268a92
-    parentId: null
-    modified: 1615752298886
-    created: 1615752298886
-    name: Gico
-    description: ""
-    scope: null
-    _type: workspace
   - _id: req_84f0720e2af64f2a872be2c3a385eb5a
     parentId: fld_a5143b0ad83e45488262d0ba2b32436d
     modified: 1615986356929
@@ -65,7 +163,7 @@ resources:
     _type: request
   - _id: req_62ae0ae4a81a4904b2bfbd2d61e96401
     parentId: fld_a5143b0ad83e45488262d0ba2b32436d
-    modified: 1615986463804
+    modified: 1616019482617
     created: 1615986274888
     url: "{{API}}/commit/5f45cd652727cea705e753e252a301ce520baa84/"
     name: /commit/<uid>/
@@ -76,7 +174,7 @@ resources:
     headers: []
     authentication:
       type: bearer
-      token: suca
+      token: this_is_THE_secret_key
       prefix: ""
       disabled: false
     metaSortKey: -1615341965630
