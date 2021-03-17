@@ -1,7 +1,7 @@
 use crate::db::get_client;
 use crate::errors::AppError;
 
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use deadpool_postgres::Pool;
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper::FromTokioPostgresRow;
@@ -14,7 +14,7 @@ pub struct Commit {
     pub hash: String,
     pub tree: Option<String>,
     pub text: String,
-    pub date: NaiveDateTime,
+    pub date: DateTime<Local>,
     pub author_email: String, // Reference to Email
     pub author_name: String,
     pub committer_email: String, // Reference to Email
