@@ -12,7 +12,7 @@ use tokio_pg_mapper_derive::PostgresMapper;
 /// Commit model
 pub struct Commit {
     pub hash: String,
-    pub tree: String,
+    pub tree: Option<String>,
     pub text: String,
     pub date: NaiveDateTime,
     pub author_email: String, // Reference to Email
