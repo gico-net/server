@@ -3,6 +3,7 @@ mod db;
 mod errors;
 mod helpers;
 
+mod commit;
 mod email;
 mod repository;
 
@@ -37,6 +38,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .configure(repository::routes::config)
             .configure(email::routes::config)
+            .configure(commit::routes::config)
     })
     .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
