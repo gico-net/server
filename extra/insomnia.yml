@@ -1,8 +1,93 @@
 _type: export
 __export_format: 4
-__export_date: 2021-03-16T13:18:44.060Z
+__export_date: 2021-03-17T13:16:43.407Z
 __export_source: insomnia.desktop.app:v2020.4.2
 resources:
+  - _id: req_7b3981fcb2f04390af59d88e46e24f3c
+    parentId: fld_a5143b0ad83e45488262d0ba2b32436d
+    modified: 1615986338946
+    created: 1615986331711
+    url: "{{ API }}/commit/"
+    name: /commit/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615341965680
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_a5143b0ad83e45488262d0ba2b32436d
+    parentId: wrk_83d42d64ffc54233ba18b02611268a92
+    modified: 1615986286318
+    created: 1615986286318
+    name: Commit
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1615986286319
+    _type: request_group
+  - _id: wrk_83d42d64ffc54233ba18b02611268a92
+    parentId: null
+    modified: 1615752298886
+    created: 1615752298886
+    name: Gico
+    description: ""
+    scope: null
+    _type: workspace
+  - _id: req_84f0720e2af64f2a872be2c3a385eb5a
+    parentId: fld_a5143b0ad83e45488262d0ba2b32436d
+    modified: 1615986356929
+    created: 1615986342658
+    url: "{{ API }}/commit/5f45cd652727cea705e753e252a301ce520baa84/"
+    name: /commit/<uid>/
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1615341965655
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_62ae0ae4a81a4904b2bfbd2d61e96401
+    parentId: fld_a5143b0ad83e45488262d0ba2b32436d
+    modified: 1615986463804
+    created: 1615986274888
+    url: "{{API}}/commit/5f45cd652727cea705e753e252a301ce520baa84/"
+    name: /commit/<uid>/
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication:
+      type: bearer
+      token: suca
+      prefix: ""
+      disabled: false
+    metaSortKey: -1615341965630
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
   - _id: req_d42fbef765e149648399036fbb069ea3
     parentId: fld_b5ba3b39b5394b64b0fea47812192c27
     modified: 1615752358888
@@ -34,14 +119,6 @@ resources:
     environmentPropertyOrder: null
     metaSortKey: -1615752305144
     _type: request_group
-  - _id: wrk_83d42d64ffc54233ba18b02611268a92
-    parentId: null
-    modified: 1615752298886
-    created: 1615752298886
-    name: Gico
-    description: ""
-    scope: null
-    _type: workspace
   - _id: req_4a674beeeee048f9a804d3b5f4ce5abf
     parentId: fld_b5ba3b39b5394b64b0fea47812192c27
     modified: 1615899152584
