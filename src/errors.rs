@@ -4,11 +4,12 @@ use serde::Serialize;
 use std::fmt;
 use tokio_postgres::error::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum AppErrorType {
     DbError,
     NotFoundError,
     AuthorizationError,
+    GitError,
 }
 
 #[derive(Debug)]
@@ -72,6 +73,7 @@ impl ResponseError for AppError {
             AppErrorType::DbError => StatusCode::INTERNAL_SERVER_ERROR,
             AppErrorType::NotFoundError => StatusCode::NOT_FOUND,
             AppErrorType::AuthorizationError => StatusCode::UNAUTHORIZED,
+            AppErrorType::GitError => StatusCode::BAD_REQUEST,
         }
     }
 
