@@ -123,6 +123,7 @@ impl Commit {
 
         // Remove the last `,`
         let _ = raw_query.pop();
+        raw_query += " RETURNING *";
 
         // TODO: write query with &commits and parameter. Need to implement
         // ToSql trait for `Commit` model
