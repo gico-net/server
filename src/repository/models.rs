@@ -1,3 +1,4 @@
+use crate::branch::models::{Branch, BranchData};
 use crate::commit::models::Commit;
 use crate::db::get_client;
 use crate::email::models::{Email, EmailData};
@@ -30,6 +31,7 @@ pub struct Repository {
 #[derive(Serialize, Deserialize)]
 pub struct RepositoryData {
     pub url: String,
+    pub branch: String,
 }
 
 impl Repository {
@@ -190,9 +192,13 @@ impl Repository {
 
         match repo {
             Some(repo) => {
-                let commits = match git::repo_commits(&repo_name) {
+                let commits = match git::repo_commits(&repo_name, &data.branch)
+                {
                     Ok(c) => c,
                     Err(e) => {
+                        // It also need to remove the repository from the db
+                        let _ =
+                            Repository::delete(pool.clone(), &repo.id).await;
                         return Err(AppError {
                             message: Some(
                                 format!(
@@ -203,7 +209,7 @@ impl Repository {
                             ),
                             cause: Some("Repository clone".to_string()),
                             error_type: AppErrorType::GitError,
-                        })
+                        });
                     }
                 };
 
@@ -224,9 +230,21 @@ impl Repository {
 
                 let commits_result =
                     Commit::create(pool.clone(), commits).await;
-                if let Err(e) = commits_result {
-                    return Err(e);
-                }
+
+                match commits_result {
+                    Ok(commits_res_vec) => {
+                        let branch_data = BranchData {
+                            name: data.branch.clone(),
+                            repository_id: repo.id,
+                            head: commits_res_vec[0].hash.clone(),
+                        };
+                        let _ =
+                            Branch::create(pool.clone(), &branch_data).await;
+                    }
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
 
                 Ok(repo)
             }

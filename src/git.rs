@@ -103,7 +103,13 @@ fn get_commit(gcommit: &git2::Commit, repo_name: &String) -> Commit {
 /// Then, open the repository.
 /// Then, get commits
 /// Finally, remove the temporary folder
-pub fn repo_commits(repo_name: &String) -> Result<Vec<Commit>, Error> {
+pub fn repo_commits(
+    repo_name: &String,
+    branch: &String,
+) -> Result<Vec<Commit>, Error> {
+    // Remove a possible already cloned repository
+    let _ = remove_dir_all(get_tmp_dir(&repo_name));
+
     // Try to clone the repo. If it returns an error, it's useless to go ahead:
     // raises an error.
     let repo = match clone_repo(&repo_name) {
@@ -113,7 +119,7 @@ pub fn repo_commits(repo_name: &String) -> Result<Vec<Commit>, Error> {
         }
     };
 
-    if let Err(e) = get_branch(&repo, "main") {
+    if let Err(e) = get_branch(&repo, branch) {
         return Err(e);
     }
 
@@ -128,14 +134,6 @@ pub fn repo_commits(repo_name: &String) -> Result<Vec<Commit>, Error> {
     for commit in revwalk {
         let hash = repo.find_commit(commit?)?;
         commits.push(get_commit(&hash, &repo_name));
-    }
-
-    if let Err(_) = remove_dir_all(get_tmp_dir(&repo_name)) {
-        return Err(git2::Error::new(
-            git2::ErrorCode::GenericError,
-            git2::ErrorClass::Os,
-            "Temporary clone not deleted",
-        ));
     }
 
     Ok(commits)

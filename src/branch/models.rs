@@ -119,7 +119,7 @@ impl Branch {
 
         let statement = client
             .prepare(
-                "INSERT INTO repository(id, name, repository_id, head)
+                "INSERT INTO branch(id, name, repository_id, head)
                 VALUES($1, $2, $3, $4)
                 RETURNING *",
             )

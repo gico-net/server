@@ -108,21 +108,22 @@ impl Commit {
                 None => "NULL".to_string(),
             };
             raw_query += &format!(
-                "('{}', {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}'),",
+                "('{}', {}, E'{}', '{}', '{}', E'{}', '{}', E'{}', '{}'),",
                 commit.hash,
                 tree,
-                commit.text,
+                commit.text.replace("'", "\\'"),
                 commit.date,
                 commit.author_email,
-                commit.author_name,
+                commit.author_name.replace("'", "\\'"),
                 commit.committer_email,
-                commit.committer_name,
+                commit.committer_name.replace("'", "\\'"),
                 commit.repository_url
             )[..]
         }
 
         // Remove the last `,`
         let _ = raw_query.pop();
+        raw_query += " RETURNING *";
 
         // TODO: write query with &commits and parameter. Need to implement
         // ToSql trait for `Commit` model
