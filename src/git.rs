@@ -119,7 +119,7 @@ pub fn repo_commits(
         }
     };
 
-    if let Err(e) = get_branch(&repo, "main") {
+    if let Err(e) = get_branch(&repo, branch) {
         return Err(e);
     }
 
