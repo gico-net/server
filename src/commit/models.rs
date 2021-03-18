@@ -93,4 +93,50 @@ impl Commit {
             }),
         }
     }
+
+    /// Create commits from an array
+    pub async fn create(
+        pool: Pool,
+        commits: Vec<Commit>,
+    ) -> Result<Vec<Commit>, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+        let mut raw_query = "INSERT INTO commit VALUES".to_string();
+
+        for commit in commits {
+            let tree = match commit.tree {
+                Some(t) => format!("'{}'", t),
+                None => "NULL".to_string(),
+            };
+            raw_query += &format!(
+                "('{}', {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}'),",
+                commit.hash,
+                tree,
+                commit.text,
+                commit.date,
+                commit.author_email,
+                commit.author_name,
+                commit.committer_email,
+                commit.committer_name,
+                commit.repository_url
+            )[..]
+        }
+
+        // Remove the last `,`
+        let _ = raw_query.pop();
+
+        // TODO: write query with &commits and parameter. Need to implement
+        // ToSql trait for `Commit` model
+        // let statement = client.prepare(&query[..]).await?;
+        // client.query(&statement, &[&commits]
+
+        let statement = client.prepare(&raw_query[..]).await?;
+        let result = client
+            .query(&statement, &[])
+            .await?
+            .iter()
+            .map(|row| Commit::from_row_ref(row).unwrap())
+            .collect::<Vec<Commit>>();
+
+        Ok(result)
+    }
 }
