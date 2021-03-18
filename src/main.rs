@@ -3,6 +3,8 @@ mod db;
 mod errors;
 mod helpers;
 
+mod git;
+
 mod branch;
 mod commit;
 mod email;
