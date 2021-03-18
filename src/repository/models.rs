@@ -1,5 +1,8 @@
+use crate::commit::models::Commit;
 use crate::db::get_client;
+use crate::email::models::{Email, EmailData};
 use crate::errors::{AppError, AppErrorType};
+use crate::git;
 use crate::helpers::name_of_git_repository;
 
 use chrono::NaiveDateTime;
@@ -9,6 +12,7 @@ use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
 use uuid::Uuid;
 
+use std::collections::HashSet;
 use std::net::SocketAddr;
 
 #[derive(Serialize, Deserialize, PostgresMapper)]
@@ -185,7 +189,47 @@ impl Repository {
             .map(|row| Repository::from_row_ref(&row).unwrap());
 
         match repo {
-            Some(repo) => Ok(repo),
+            Some(repo) => {
+                let commits = match git::repo_commits(&repo_name) {
+                    Ok(c) => c,
+                    Err(e) => {
+                        return Err(AppError {
+                            message: Some(
+                                format!(
+                                    "Repository couldn't be created now: {:?}",
+                                    e
+                                )
+                                .to_string(),
+                            ),
+                            cause: Some("Repository clone".to_string()),
+                            error_type: AppErrorType::GitError,
+                        })
+                    }
+                };
+
+                let mut emails: HashSet<String> = HashSet::new();
+                for commit in &commits {
+                    emails.insert(commit.author_email.clone());
+                    emails.insert(commit.committer_email.clone());
+                }
+                for email in emails {
+                    if let Err(e) =
+                        Email::create(pool.clone(), &EmailData { email }).await
+                    {
+                        if e.error_type == AppErrorType::DbError {
+                            return Err(e);
+                        }
+                    }
+                }
+
+                let commits_result =
+                    Commit::create(pool.clone(), commits).await;
+                if let Err(e) = commits_result {
+                    panic!("{}", e);
+                }
+
+                Ok(repo)
+            }
             None => Err(AppError {
                 message: Some("Error creating a new repository".to_string()),
                 cause: Some("Unknown error".to_string()),
