@@ -1,3 +1,7 @@
+# Gico
+
+[![License: GPLv3](https://img.shields.io/badge/license-GPL%20v3-blue)](LICENSE)
+
 # Configuration
 
 <key>.env</key>
