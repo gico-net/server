@@ -225,7 +225,7 @@ impl Repository {
                 let commits_result =
                     Commit::create(pool.clone(), commits).await;
                 if let Err(e) = commits_result {
-                    panic!("{}", e);
+                    return Err(e);
                 }
 
                 Ok(repo)
