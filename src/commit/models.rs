@@ -111,12 +111,12 @@ impl Commit {
                 "('{}', {}, E'{}', '{}', '{}', E'{}', '{}', E'{}', '{}'),",
                 commit.hash,
                 tree,
-                commit.text.replace("'", "\\'"),
+                commit.text.replace("\\'", "'").replace("'", "\\'"),
                 commit.date,
                 commit.author_email,
-                commit.author_name.replace("'", "\\'"),
+                commit.author_name.replace("\\'", "'").replace("'", "\\'"),
                 commit.committer_email,
-                commit.committer_name.replace("'", "\\'"),
+                commit.committer_name.replace("\\'", "'").replace("'", "\\'"),
                 commit.repository_url
             )[..]
         }
