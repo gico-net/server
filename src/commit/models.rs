@@ -27,7 +27,7 @@ impl Commit {
     pub async fn find_all(pool: Pool) -> Result<Vec<Commit>, AppError> {
         let client = get_client(pool.clone()).await.unwrap();
         let statement = client
-            .prepare("SELECT * FROM commit ORDER BY date DESC")
+            .prepare("SELECT * FROM commit ORDER BY date DESC LIMIT 300")
             .await?;
 
         let commits = client
