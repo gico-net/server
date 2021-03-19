@@ -27,15 +27,15 @@ async fn index(state: web::Data<AppState>) -> impl Responder {
 /// It is a String, casted in an Uuid format.
 async fn get_repo(
     state: web::Data<AppState>,
-    id: web::Path<(String,)>,
+    id: web::Path<String>,
 ) -> impl Responder {
     // I have to match the &id.0 because if it's not a valid Uuid, the server
     // must response "Repository not found".
     // If I pass a not valid Uuid to Repository::find() it raises an error.
-    let uuid: Uuid = uuid_from_string(&id.0);
+    let uuid: Uuid = uuid_from_string(&id);
 
     let result = Repository::find(state.pool.clone(), &uuid).await;
-    info!(state.log, "GET /repo/{}/", id.0);
+    info!(state.log, "GET /repo/{}/", id);
 
     // `map_err` is also used when repo is not found
     result
@@ -48,9 +48,9 @@ async fn get_repo(
 async fn delete_repo(
     req: HttpRequest,
     state: web::Data<AppState>,
-    id: web::Path<(String,)>,
+    id: web::Path<String>,
 ) -> impl Responder {
-    let uuid: Uuid = uuid_from_string(&id.0);
+    let uuid: Uuid = uuid_from_string(&id);
     match req.headers().get(header::AUTHORIZATION) {
         Some(x)
             if x.to_str().unwrap()
@@ -102,12 +102,12 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/repo")
             .service(
-                web::resource("{_:/?}")
+                web::resource("/")
                     .route(web::get().to(index))
                     .route(web::post().to(create_repo)),
             )
             .service(
-                web::resource("/{id}{_:/?}")
+                web::resource("/{id}/")
                     .route(web::get().to(get_repo))
                     .route(web::delete().to(delete_repo)),
             ),
