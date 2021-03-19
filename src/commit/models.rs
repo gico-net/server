@@ -116,7 +116,10 @@ impl Commit {
                 commit.author_email,
                 commit.author_name.replace("\\'", "'").replace("'", "\\'"),
                 commit.committer_email,
-                commit.committer_name.replace("\\'", "'").replace("'", "\\'"),
+                commit
+                    .committer_name
+                    .replace("\\'", "'")
+                    .replace("'", "\\'"),
                 commit.repository_url
             )[..]
         }
