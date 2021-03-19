@@ -63,13 +63,12 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/email")
             .service(
-                web::resource("{_:/?}")
+                web::resource("/")
                     .route(web::get().to(index))
                     .route(web::post().to(create_email)),
             )
             .service(
-                web::resource("/search{_:/?}")
-                    .route(web::get().to(search_email)),
+                web::resource("/search/").route(web::get().to(search_email)),
             ),
     );
 }

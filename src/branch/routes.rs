@@ -26,9 +26,9 @@ async fn index(state: web::Data<AppState>) -> impl Responder {
 // Endpoint used for getting branches of a repository
 async fn get_repo_branch(
     state: web::Data<AppState>,
-    repo: web::Path<(String,)>,
+    repo: web::Path<String>,
 ) -> impl Responder {
-    let uuid: Uuid = uuid_from_string(&repo.0);
+    let uuid: Uuid = uuid_from_string(&repo);
     info!(state.log, "GET /branch/repo/{}/", &uuid);
 
     let result = Branch::find_by_repo(state.pool.clone(), &uuid).await;
@@ -42,12 +42,12 @@ async fn get_repo_branch(
 /// It is a String, casted in an Uuid format.
 async fn get_branch(
     state: web::Data<AppState>,
-    id: web::Path<(String,)>,
+    id: web::Path<String>,
 ) -> impl Responder {
-    let uuid: Uuid = uuid_from_string(&id.0);
+    let uuid: Uuid = uuid_from_string(&id);
 
     let result = Branch::find(state.pool.clone(), &uuid).await;
-    info!(state.log, "GET /branch/{}/", id.0);
+    info!(state.log, "GET /branch/{}/", id);
 
     // `map_err` is also used when repo is not found
     result
@@ -60,15 +60,15 @@ async fn get_branch(
 async fn delete_branch(
     req: HttpRequest,
     state: web::Data<AppState>,
-    id: web::Path<(String,)>,
+    id: web::Path<String>,
 ) -> impl Responder {
-    let uuid: Uuid = uuid_from_string(&id.0);
+    let uuid: Uuid = uuid_from_string(&id);
     match req.headers().get(header::AUTHORIZATION) {
         Some(x)
             if x.to_str().unwrap()
                 != env::var("SECRET_KEY").unwrap_or("".to_string()) =>
         {
-            info!(state.log, "DELETE /branch/{}/ 401", id.0);
+            info!(state.log, "DELETE /branch/{}/ 401", id);
             return Err(AppError {
                 error_type: AppErrorType::AuthorizationError,
                 message: Some(
@@ -79,13 +79,13 @@ async fn delete_branch(
         }
         Some(_) => {}
         None => {
-            info!(state.log, "DELETE /branch/{}/ 400", id.0);
+            info!(state.log, "DELETE /branch/{}/ 400", id);
             return Ok(HttpResponse::BadRequest().body(""));
         }
     };
 
     let result = Branch::delete(state.pool.clone(), &uuid).await;
-    info!(state.log, "DELETE /branch/{}/", id.0);
+    info!(state.log, "DELETE /branch/{}/", id);
 
     result
         .map(|_| HttpResponse::NoContent().body(""))
@@ -96,13 +96,13 @@ async fn delete_branch(
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/branch")
-            .service(web::resource("{_:/?}").route(web::get().to(index)))
+            .service(web::resource("/").route(web::get().to(index)))
             .service(
-                web::resource("/repo/{repo_id}{_:/?}")
+                web::resource("/repo/{repo_id}/")
                     .route(web::get().to(get_repo_branch)),
             )
             .service(
-                web::resource("/{id}{_:/?}")
+                web::resource("/{id}/")
                     .route(web::get().to(get_branch))
                     .route(web::delete().to(delete_branch)),
             ),

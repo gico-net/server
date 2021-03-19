@@ -10,9 +10,11 @@ mod commit;
 mod email;
 mod repository;
 
-use actix_web::{middleware, App, HttpServer};
+use actix_cors::Cors;
+use actix_web::{http::header, middleware, App, HttpServer};
 use dotenv::dotenv;
 use slog::info;
+use std::env;
 use tokio_postgres::NoTls;
 
 use crate::config::{AppState, Config};
@@ -39,6 +41,21 @@ async fn main() -> std::io::Result<()> {
                 log: log.clone(),
             })
             .wrap(middleware::Logger::default())
+            .wrap(
+                Cors::default()
+                    .allowed_origin(
+                        &env::var("CLIENT")
+                            .unwrap_or("http://localhost:8080".to_string())[..]
+                    )
+                    .allowed_methods(vec!["GET", "POST", "DELETE"])
+                    .allowed_headers(vec![
+                        header::AUTHORIZATION,
+                        header::ACCEPT,
+                    ])
+                    .allowed_header(header::CONTENT_TYPE)
+                    .supports_credentials()
+                    .max_age(3600),
+            )
             .configure(repository::routes::config)
             .configure(email::routes::config)
             .configure(commit::routes::config)
