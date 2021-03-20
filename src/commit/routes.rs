@@ -70,11 +70,24 @@ async fn delete_commit(
         .map_err(|e| e)
 }
 
+/// Endpoint used for getting a raking of the post authors by commit number
+async fn get_top_authors(state: web::Data<AppState>) -> impl Responder {
+    info!(state.log, "GET /commit/top/");
+    let result = Commit::most_authors(state.pool.clone()).await;
+
+    result
+        .map(|authors| HttpResponse::Ok().json(authors))
+        .map_err(|e| e)
+}
+
 /// Routes for commits
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/commit")
             .service(web::resource("/").route(web::get().to(index)))
+            .service(
+                web::resource("/top/").route(web::get().to(get_top_authors)),
+            )
             .service(
                 web::resource("/{hash}/")
                     .route(web::get().to(get_commit))
