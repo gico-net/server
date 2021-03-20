@@ -22,6 +22,14 @@ pub struct Commit {
     pub repository_url: String, // Reference to Repository
 }
 
+/// Model used for 'most authors' function
+#[derive(Serialize, Deserialize)]
+pub struct CommitNumAuthor {
+    pub num: i64,
+    pub author_email: String,
+    pub author_name: String,
+}
+
 impl Commit {
     /// Find all commits. Order them by descrescent `date` field
     pub async fn find_all(pool: Pool) -> Result<Vec<Commit>, AppError> {
@@ -142,5 +150,29 @@ impl Commit {
             .collect::<Vec<Commit>>();
 
         Ok(result)
+    }
+
+    /// Returns a ranking of authors of his commits number
+    pub async fn most_authors(
+        pool: Pool,
+    ) -> Result<Vec<CommitNumAuthor>, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+        let statement = client.prepare(
+                "SELECT COUNT(hash) as num, author_email, author_name FROM commit
+                GROUP BY author_email, author_name ORDER BY COUNT(hash) DESC"
+            ).await?;
+
+        let authors = client
+            .query(&statement, &[])
+            .await?
+            .iter()
+            .map(|row| CommitNumAuthor {
+                num: row.get(0),
+                author_email: row.get(1),
+                author_name: row.get(2),
+            })
+            .collect::<Vec<CommitNumAuthor>>();
+
+        Ok(authors)
     }
 }
