@@ -4,12 +4,26 @@ use crate::errors::{AppError, AppErrorResponse, AppErrorType};
 use actix_web::http::header;
 use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use slog::info;
+use std::collections::HashMap;
 use std::env;
 
 /// Endpoint used for getting all commits
-async fn index(state: web::Data<AppState>) -> impl Responder {
-    info!(state.log, "GET /commit/");
-    let result = Commit::find_all(state.pool.clone()).await;
+async fn index(
+    req: HttpRequest,
+    state: web::Data<AppState>,
+) -> impl Responder {
+    let query =
+        web::Query::<HashMap<String, String>>::from_query(req.query_string())
+            .unwrap();
+
+    let hash = match query.get("q") {
+        Some(x) => x.clone(),
+        None => String::new(),
+    };
+
+    info!(state.log, "GET /commit/?q={}", &hash);
+
+    let result = Commit::find_all(state.pool.clone(), &hash).await;
 
     match result {
         Ok(commits) => HttpResponse::Ok().json(commits),

@@ -32,20 +32,38 @@ pub struct CommitNumAuthor {
 
 impl Commit {
     /// Find all commits. Order them by descrescent `date` field
-    pub async fn find_all(pool: Pool) -> Result<Vec<Commit>, AppError> {
+    /// `commit_hash` is used to search commit that matches with some sha codes
+    pub async fn find_all(
+        pool: Pool,
+        commit_hash: &String,
+    ) -> Result<Vec<Commit>, AppError> {
         let client = get_client(pool.clone()).await.unwrap();
-        let statement = client
-            .prepare("SELECT * FROM commit ORDER BY date DESC LIMIT 300")
-            .await?;
 
-        let commits = client
-            .query(&statement, &[])
-            .await?
+        let query;
+        let hash;
+        if commit_hash != "" {
+            hash = format!("%{}%", commit_hash);
+            query = "SELECT * FROM commit WHERE hash LIKE $1 ORDER BY date DESC LIMIT 300";
+        } else {
+            hash = String::new();
+            query = "SELECT * FROM commit ORDER BY date DESC LIMIT 300"
+        }
+
+        let statement = client.prepare(query).await?;
+
+        let commits;
+        if hash != "" {
+            commits = client.query(&statement, &[&hash]).await?;
+        } else {
+            commits = client.query(&statement, &[]).await?;
+        }
+
+        let result = commits
             .iter()
             .map(|row| Commit::from_row_ref(row).unwrap())
             .collect::<Vec<Commit>>();
 
-        Ok(commits)
+        Ok(result)
     }
 
     // Find a commit that it has an hash equals to `hash`
