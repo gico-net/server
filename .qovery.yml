@@ -1,14 +1,11 @@
+---
 application:
-  name: gico-api
-  project: Gico
-  publicly_accessible: true
-databases:
-- type: postgresql
-  version: "11.5"
-  name: gico-api-pg-db-240321
+  name: "server"
+  project: "gico-db"
+  organization: "QoveryCommunity"
 routers:
-- name: main
+- name: "main-server"
   routes:
-  - application_name: gico-api
+  - application_name: "server"
     paths:
-    - /
+    - "/*"
