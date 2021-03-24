@@ -1,0 +1,14 @@
+application:
+  name: gico-api
+  project: Gico
+  publicly_accessible: true
+databases:
+- type: postgresql
+  version: "12.0"
+  name: gico-api-pg-db-240321
+routers:
+- name: main
+  routes:
+  - application_name: gico-api
+    paths:
+    - /
