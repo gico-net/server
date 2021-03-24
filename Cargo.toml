@@ -5,6 +5,8 @@ authors = ["Santo Cariotti <santo@dcariotti.me>"]
 edition = "2018"
 
 [dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
+
 actix-rt = "1.0.0"
 actix-web = "3.0.0"
 actix-http = "1.0.1"

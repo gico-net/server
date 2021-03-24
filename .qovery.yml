@@ -6,7 +6,7 @@ application:
 databases:
 - type: "POSTGRESQL"
   name: "gico-api-pg-db"
-  version: "11"
+  version: "12"
 routers:
 - name: "main-gico-api"
   routes:
