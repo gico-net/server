@@ -3,10 +3,6 @@ application:
   name: "gico-api"
   project: "gico"
   organization: "QoveryCommunity"
-databases:
-- type: "POSTGRESQL"
-  name: "gico-api-pg-db"
-  version: "12"
 routers:
 - name: "main-gico-api"
   routes:
