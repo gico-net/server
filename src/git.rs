@@ -136,5 +136,8 @@ pub fn repo_commits(
         commits.push(get_commit(&hash, &repo_name));
     }
 
+    // Remove the cloned repository folder
+    let _ = remove_dir_all(get_tmp_dir(&repo_name));
+
     Ok(commits)
 }
