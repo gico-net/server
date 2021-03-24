@@ -21,9 +21,31 @@ async fn index(
         None => String::new(),
     };
 
-    info!(state.log, "GET /commit/?q={}", &hash);
+    let repo_user = match query.get("repository_user") {
+        Some(x) => x.clone(),
+        None => String::new(),
+    };
+    let repo_name = match query.get("repository_name") {
+        Some(x) => x.clone(),
+        None => String::new(),
+    };
 
-    let result = Commit::find_all(state.pool.clone(), &hash).await;
+    let result;
+    if repo_user != "" && repo_name != "" {
+        info!(
+            state.log,
+            "GET /commit/?repository_user={}&repository_name={}",
+            &repo_user,
+            &repo_name
+        );
+        let repository_url = format!("{}/{}", repo_user, repo_name);
+        result =
+            Commit::find_by_repository(state.pool.clone(), repository_url)
+                .await;
+    } else {
+        info!(state.log, "GET /commit/?q={}", &hash);
+        result = Commit::find_all(state.pool.clone(), &hash).await;
+    }
 
     match result {
         Ok(commits) => HttpResponse::Ok().json(commits),
