@@ -1,11 +1,15 @@
 ---
 application:
-  name: "server"
+  name: "gico-api"
   project: "gico-db"
   organization: "QoveryCommunity"
+databases:
+- type: "POSTGRESQL"
+  name: "gico-api-pg-db"
+  version: "11"
 routers:
-- name: "main-server"
+- name: "main-gico-api"
   routes:
-  - application_name: "server"
+  - application_name: "gico-api"
     paths:
     - "/*"
