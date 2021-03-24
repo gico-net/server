@@ -66,6 +66,32 @@ impl Commit {
         Ok(result)
     }
 
+    /// Find all repository url' commits
+    pub async fn find_by_repository(
+        pool: Pool,
+        repository_url: String,
+    ) -> Result<Vec<Commit>, AppError> {
+        let client = get_client(pool.clone()).await.unwrap();
+
+        let statement = client
+            .prepare(
+                "SELECT * FROM commit
+            WHERE repository_url = $1
+            ORDER BY date DESC
+            LIMIT 1000",
+            )
+            .await?;
+
+        let commits = client
+            .query(&statement, &[&repository_url])
+            .await?
+            .iter()
+            .map(|row| Commit::from_row_ref(row).unwrap())
+            .collect::<Vec<Commit>>();
+
+        Ok(commits)
+    }
+
     // Find a commit that it has an hash equals to `hash`
     pub async fn find(pool: Pool, hash: String) -> Result<Commit, AppError> {
         let client = get_client(pool.clone()).await.unwrap();
