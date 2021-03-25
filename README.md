@@ -7,13 +7,13 @@
 <key>.env</key>
 
 ```
-SERVER.HOST=<host>
-SERVER.PORT=<port>
-PG.USER=<user>
-PG.PASSWORD=<psw>
-PG.HOST=<host>
-PG.PORT=<port>
-PG.DBNAME=<db>
-PG.POOL.MAX_SIZE=<poolsize>
+SERVER__HOST=<host>
+SERVER__PORT=<port>
+PG__USER=<user>
+PG__PASSWORD=<psw>
+PG__HOST=<host>
+PG__PORT=<port>
+PG__DBNAME=<db>
+PG__POOL__MAX_SIZE=<poolsize>
 SECRET_KEY=
 ```
