@@ -1,0 +1,15 @@
+---
+application:
+  name: "server"
+  project: "gico"
+  organization: "QoveryCommunity"
+databases:
+- type: "POSTGRESQL"
+  name: "gico-db-pg"
+  version: "12"
+routers:
+- name: "main-server"
+  routes:
+  - application_name: "server"
+    paths:
+    - "/*"
