@@ -43,10 +43,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .wrap(
                 Cors::default()
-                    .allowed_origin(
-                        &env::var("CLIENT")
-                            .unwrap_or("http://localhost:8080".to_string())[..]
-                    )
+                    .allowed_origin(&env::var("CLIENT").unwrap())
                     .allowed_methods(vec!["GET", "POST", "DELETE"])
                     .allowed_headers(vec![
                         header::AUTHORIZATION,
